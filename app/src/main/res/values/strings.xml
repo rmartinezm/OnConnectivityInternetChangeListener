@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">OnConnectivityInternetChangeListener</string>
+    <string name="connected">Conectado</string>
+    <string name="desconnected">Desconectado</string>
+</resources>
