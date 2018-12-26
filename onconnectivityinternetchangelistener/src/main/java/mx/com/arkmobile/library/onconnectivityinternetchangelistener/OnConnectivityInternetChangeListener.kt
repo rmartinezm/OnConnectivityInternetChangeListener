@@ -25,23 +25,20 @@ class OnConnectivityInternetChangeListener private constructor() {
 
     /* */
     private lateinit var connectivityManager: ConnectivityManager
-    private var cellularConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue && newValue) {
-            // Pass
-        } else
-            notifyChanges(ConnectionType.CELLULAR, newValue)
+    private var cellularConnection by Delegates.observable<Boolean?>(null){ _, oldValue, newValue ->
+        val value = oldValue ?: !newValue!!
+        if(value != newValue)
+            notifyChanges(ConnectionType.CELLULAR, newValue!!)
     }
-    private var wifiConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue && newValue) {
-            // Pass
-        } else
-            notifyChanges(ConnectionType.WIFI, newValue)
+    private var wifiConnection by Delegates.observable<Boolean?>(false){ _, oldValue, newValue ->
+        val value = oldValue ?: !newValue!!
+        if(value != newValue)
+            notifyChanges(ConnectionType.WIFI, newValue!!)
     }
-    private var anyConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue && newValue) {
-            // Pass
-        } else
-            notifyChanges(ConnectionType.ANY, newValue)
+    private var anyConnection by Delegates.observable<Boolean?>(false){ _, oldValue, newValue ->
+        val value = oldValue ?: !newValue!!
+        if(value != newValue)
+            notifyChanges(ConnectionType.ANY, newValue!!)
     }
 
     /* */
@@ -98,7 +95,7 @@ class OnConnectivityInternetChangeListener private constructor() {
         CheckInternetTask {
             cellularConnection = it && activeNetwork?.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ?: false
             wifiConnection = it && activeNetwork?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ?: false
-            anyConnection = it && cellularConnection || wifiConnection
+            anyConnection = it && (cellularConnection ?: false) || (wifiConnection ?: false)
         }.execute()
 
     }
@@ -109,9 +106,9 @@ class OnConnectivityInternetChangeListener private constructor() {
      * @return [Boolean]
      */
     fun isCurrentConnected(connectionType: ConnectionType = ConnectionType.ANY) : Boolean = when(connectionType){
-        ConnectionType.WIFI -> wifiConnection
-        ConnectionType.CELLULAR -> cellularConnection
-        ConnectionType.ANY -> wifiConnection || cellularConnection
+        ConnectionType.WIFI -> (wifiConnection ?: false)
+        ConnectionType.CELLULAR -> (cellularConnection ?: false)
+        ConnectionType.ANY -> (wifiConnection ?: false) || (cellularConnection ?: false)
     }
 
     /**
