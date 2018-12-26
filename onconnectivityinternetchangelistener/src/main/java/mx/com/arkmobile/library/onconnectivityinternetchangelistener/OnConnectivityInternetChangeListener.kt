@@ -26,15 +26,21 @@ class OnConnectivityInternetChangeListener private constructor() {
     /* */
     private lateinit var connectivityManager: ConnectivityManager
     private var cellularConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue != newValue)
+        if(oldValue && newValue) {
+            // Pass
+        } else
             notifyChanges(ConnectionType.CELLULAR, newValue)
     }
     private var wifiConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue != newValue)
+        if(oldValue && newValue) {
+            // Pass
+        } else
             notifyChanges(ConnectionType.WIFI, newValue)
     }
     private var anyConnection by Delegates.observable(false){ _, oldValue, newValue ->
-        if(oldValue != newValue)
+        if(oldValue && newValue) {
+            // Pass
+        } else
             notifyChanges(ConnectionType.ANY, newValue)
     }
 
